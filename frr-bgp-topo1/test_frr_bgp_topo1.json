@@ -1,0 +1,153 @@
+{
+"ipv4base": "10.0.0.0",
+"ipv4mask": 30,
+"ipv6base": "fd00::",
+"ipv6mask": 64,
+"link_ip_start": {"ipv4": "10.0.0.0", "v4mask": 30, "ipv6": "fd00::", "v6mask": 64}, 
+"lo_prefix": {"ipv4": "1.0.", "v4mask": 32, "ipv6": "2001:DB8:F::", "v6mask": 128},
+"routers": 
+    {
+    "r1": {
+	"lo": { "ipv4": "auto", "ipv6": "auto" },
+	"links": {
+        	"r2": { "ipv4": "auto", "ipv6": "auto", "label": "r2-peer"},
+        	"r3": { "ipv4": "auto", "ipv6": "auto", "label": "r3-peer"}
+        	},
+        "bgp": { 
+                "as_number": "100",
+                "enabled": true,
+                "ecmpenabled": true,
+                "bgp_neighbors": {
+                    "1": {
+                        "keepalivetimer": 60,
+                        "holddowntimer": 180,
+                        "remoteas": "100",
+                        "peer": {
+			    "name": "r2",
+			    "label": "r1-peer",
+			    "addr_type": "ipv4"
+			}
+                    },
+                    "2": {
+                        "keepalivetimer": 60,
+                        "holddowntimer": 180,
+                        "remoteas": "100",
+                        "peer": {
+			    "name": "r3",
+			    "label": "r1-peer",
+			    "addr_type": "ipv4"
+			}
+                    }
+                },
+                "gracefulrestart":true
+               }
+    },
+    "r2": {
+	"lo": { "ipv4": "auto", "ipv6": "auto"},
+        "links": {
+        	"r1": { "ipv4": "auto", "ipv6": "auto", "label": "r1-peer"},
+        	"r3": { "ipv4": "auto", "ipv6": "auto", "label": "r3-peer"}
+        	},
+        "bgp": { 
+                "as_number": "100",
+                "enabled": true,
+                "ecmpenabled": true,
+                "bgp_neighbors": {
+                    "1": {
+                        "keepalivetimer": 60,
+                        "holddowntimer": 180,
+                        "remoteas": "100",
+                        "peer": {
+			    "name": "r1",
+			    "label": "r2-peer",
+			    "addr_type": "ipv4"
+			}
+                    },
+                    "2": {
+                        "keepalivetimer": 60,
+                        "holddowntimer": 180,
+                        "remoteas": "100",
+                        "peer": {
+			    "name": "r3",
+			    "label": "r2-peer",
+			    "addr_type": "ipv4"
+			}
+                    }
+
+                },
+                "gracefulrestart":true
+         }
+    },
+    "r3": {
+	"lo": { "ipv4": "auto", "ipv6": "auto" },
+        "links": {
+        	"r1": { "ipv4": "auto", "ipv6": "auto", "label": "r1-peer" },
+        	"r2": { "ipv4": "auto", "ipv6": "auto", "label": "r2-peer" },
+        	"r4": { "ipv4": "auto", "ipv6": "auto", "label": "r4-peer" }
+        	},
+        "bgp": {
+                "as_number": "100",
+                "enabled": true,
+                "ecmpenabled": true,
+                "bgp_neighbors": {
+                    "1": {
+                        "keepalivetimer": 60,
+                        "holddowntimer": 180,
+                        "remoteas": "100",
+                        "peer": {
+			    "name": "r1",
+			    "label": "r3-peer",
+			    "addr_type": "ipv4"
+			}
+                    },
+                    "2": {
+                        "keepalivetimer": 60,
+                        "holddowntimer": 180,
+                        "remoteas": "100",
+                        "peer": {
+			    "name": "r2",
+			    "label": "r3-peer",
+			    "addr_type": "ipv4"
+			}
+                    },
+                    "3": {
+                        "keepalivetimer": 60,
+                        "holddowntimer": 180,
+                        "remoteas": "200",
+                        "peer": {
+			    "name": "r4",
+			    "label": "r3-peer",
+			    "addr_type": "ipv4"
+			}
+                    }
+
+                },
+                "gracefulrestart":true
+               }
+    },
+    "r4": {
+	"lo": { "ipv4": "auto", "ipv6": "auto" },
+        "links": {
+        	"r3": { "ipv4": "auto", "ipv6": "auto", "label": "r3-peer" }
+        	},
+        "bgp": {
+                "as_number": "200",
+                "enabled": true,
+                "ecmpenabled": true,
+                "bgp_neighbors": {
+                    "1": {
+                        "keepalivetimer": 60,
+                        "holddowntimer": 180,
+                        "remoteas": "100",
+                        "peer": {
+			    "name": "r3",
+			    "label": "r4-peer",
+			    "addr_type": "ipv4"
+			}
+                    }
+                },
+                "gracefulrestart":true
+               }
+        }
+}}
+
