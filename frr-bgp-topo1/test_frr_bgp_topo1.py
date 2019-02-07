@@ -171,15 +171,15 @@ def teardown_module(mod):
     logger.info("Testsuite end time: {}".format(testsuite_run_time))
     logger.info("="*40)
 
-def verify_rib(dut, ip_prefix, ip_mask, no_of_routes, protocol = "static", next_hop = None):
+def verify_rib(dut, ip_prefix, ip_mask, no_of_routes, protocol= None, next_hop = None):
     """ 
     This API is to verify RIB  BGP routes.
 
     * `dut`: Device Under Test, for which user wants to test the data
     * `ip_prefix`: ip address for static route
     * `no_of_routes`: number of routes to be tested
-    * `protocol`[optional]: for which protocol, default = static
-    * `next_hop`[optional]: for which next_hop, default = None
+    * `protocol`[optional]: protocol name, default = None
+    * `next_hop`[optional]: next_hop address, default = None
     """
 
     logger.info("Entering API: verify_rib()")
@@ -195,7 +195,12 @@ def verify_rib(dut, ip_prefix, ip_mask, no_of_routes, protocol = "static", next_
 
         # Verifying RIB routes
         logger.info('Checking router {} RIB:'.format(router))
-	command = "show ip route {} json".format(protocol)
+	if protocol != None:
+    	    command = "show ip route {} json".format(protocol)
+	else:
+    	    command = "show ip route json"
+	    protocol = "learned"
+
         rib_routes_json = rnode.vtysh_cmd(command, isjson=True)
         if no_of_routes !=0:
             # Generating IPs for verification
@@ -354,38 +359,21 @@ def test_static_routes():
     assert result, "Testcase " + tc_name + " :Failed"  
 
     # Verifying RIB routes
-    dut = 'r1'
-    protocol = "static"
+    dut = 'r2'
+    #protocol = "bgp"
     ip_prefix = input_dict["r1"]["static_routes"]["ip_prefix"]
     ip_mask = input_dict["r1"]["static_routes"]["ip_mask"]
     no_of_routes = input_dict["r1"]["static_routes"]["no_of_routes"]
     next_hop = input_dict["r1"]["static_routes"]["next_hop"]
 
     # verify_rib 
-    result = verify_rib(dut, ip_prefix, ip_mask, no_of_routes, protocol = protocol, next_hop = next_hop)
+    #result = verify_rib(dut, ip_prefix, ip_mask, no_of_routes, protocol = protocol, next_hop = next_hop)
+    result = verify_rib(dut, ip_prefix, ip_mask, no_of_routes, next_hop = next_hop)
     
     assert result, "Testcase " + tc_name + " :Failed"  
     
     logger.info("Testcase " + tc_name + " :Passed \n")
     
-    # Uncomment next line for debugging
-    #tgen.mininet_cli()
-
-    # Cleanup to bring config back to physical interface from loopback interface
-    for routerN in sorted(topo['routers'].iteritems()):
-        for bgp_neighbor in topo['routers'][routerN[0]]['bgp']["bgp_neighbors"].iteritems():
-            try:
-	        del topo['routers'][routerN[0]]['bgp']["bgp_neighbors"][bgp_neighbor[0]]["peer"]["source"] 
-	    except KeyError:
-    		logger.error("Key: source is not found \n")
-
-    # Creating BGP configuration and verify BGP convergence
-    frr_cfg = create_config_files(tgen, CWD, topo)
-    bgp_convergence = verify_bgp_convergence()
-    assert bgp_convergence, "Testcase " + tc_name + " :Failed"
- 
-    logger.info("Testcase " + tc_name + " :Passed \n")
-
     # Uncomment next line for debugging
     #tgen.mininet_cli()
 

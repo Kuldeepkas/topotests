@@ -30,6 +30,7 @@ $ find ./*
 ```
 
 ### Sample JSON file for Topology creation
+```
 JSON file:
 {
 "ipv4base": "10.0.0.0",
@@ -112,6 +113,7 @@ JSON file:
          }
     },
     ...
+```
 
 - User can add as many routers as per the topology requirement in "routers" dictionary.
 - "links" will define how particular router is connected to other routers.
